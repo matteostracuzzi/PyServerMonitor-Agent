@@ -1,0 +1,13 @@
+{
+    "master_ip" : "0.0.0.0",
+    "master_port" : 2000,
+    "connection_pass": "jQlYmKDWpm",
+
+    "enabled_info": [
+        "cpu",
+        "uptime",
+        "os"
+    ],
+
+    "update_time": 5
+}
