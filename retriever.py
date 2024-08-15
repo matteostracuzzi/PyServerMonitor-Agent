@@ -9,7 +9,7 @@ class Retriever(Thread):
         super().__init__(daemon=False)
         self.sender = sender
 
-    def start(self):
+    def run(self):
         while True:
             data = self.retrieve_data()
             self.sender.send(data)
@@ -26,9 +26,11 @@ class Retriever(Thread):
                 data.update(dict(uptime = (datetime.now()-datetime.fromtimestamp(psutil.boot_time())/60/60)))
             elif info == 'os':
                 data.update(dict(os = f'{platform.uname().system} {platform.uname.version}'))
+            elif info == 'processes':
+                data.update(cls.get_processes)
         return data
 
-    @property
+    @classmethod
     def get_cpu_info(cls)->dict:
         data = {
             'cpu_use': psutil.cpu_percent(),
@@ -39,3 +41,12 @@ class Retriever(Thread):
         }
         return data
     
+    @classmethod
+    def get_processes(cls)->dict:
+        processes = []
+        for process in psutil.process_iter(['pid', 'name', 'username', 'cpu_percent', 'cmdline', 'memory']):
+            process.info['memory'] = process.info['memory'].rss/1e+6    # Convert the memory from bytes to megabytes divide by 1*10^6 
+            process.info['cpu'] = process.info.pop('cpu_percent')   # Pop in dicts returns the value of the removed key
+            processes.append(process.info)
+
+        return dict(processes=processes)

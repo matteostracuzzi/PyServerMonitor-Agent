@@ -6,7 +6,8 @@
     "enabled_info": [
         "cpu",
         "uptime",
-        "os"
+        "os",
+        "processes"
     ],
 
     "update_time": 5
